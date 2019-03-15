@@ -341,3 +341,4 @@ npm-debug.log.*
 thumbs.db
 !.gitkeep
 .idea
+session
