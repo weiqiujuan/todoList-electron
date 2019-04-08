@@ -58,7 +58,6 @@ app.all("*", function (req, res, next) {
 
 })
 
-//跨域处理
 /*app.get('/', function (req, res, next) {
     var sess = req.session
     var loginUser = sess.loginUser;
@@ -150,8 +149,8 @@ app.post('/historyApi', function (req, res) {
     console.log(req.body)
     req = JSON.stringify(req.body);
     console.log(req);
-    let startTime = req.start_time;
-    let endTime = req.end_time;
+    var startTime = req.start_time;
+    var endTime = req.end_time;
 
 
     /*client.connect(url, function (err, client) {
@@ -176,8 +175,41 @@ app.post('/historyApi', function (req, res) {
     })*/
 })
 
+app.post('/saveTomatoData',function (req,res) {
+    var document=req.body;
+    res.status(200)
+    client.connect(url,function (err,db) {
+        if(err) throw err;
+        var dBase = db.db('todoList')
+        dBase.collection('tomatoTable').insertOne(document)
+    })
+    res.send('保存成功')
+})
+
+app.get('/findTomatoData',function (req,res) {
+    res.status(200)
+    client.connect(url,function (err,db) {
+        if(err) throw err;
+        var dBase=db.db('todoList')
+        dBase.collection('tomatoTable').find({}).toArray(function (err, resultData) {
+            if (err) throw err
+            res.json(resultData)
+        })
+    })
+})
+
+app.get('/deleteTomatoData',function (req,res) {
+    res.status(200)
+    client.connect(url,function (err,db) {
+        if(err) throw err;
+        var dBase=db.db('todoList')
+        dBase.collection('tomatoTable').remove({})
+        res.send('暂无数据')
+    })
+
+})
 //设置接口
-app.get('/data', function (req, res) {
+/*app.get('/data', function (req, res) {
     res.status(200)
     //从数据库获取数据
     MongoClient.connect(url, function (err, db) {
@@ -192,7 +224,7 @@ app.get('/data', function (req, res) {
     })
     //读取死数据
     //res.json(resultData)
-})
+})*/
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
