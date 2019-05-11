@@ -132,7 +132,6 @@ app.post('/login', function (req, res, next) {
     })
 })*/
 
-
 app.get('/logout', function (req, res, next) {
     // 备注：这里用�? session-file-store 在destroy 方法里，并没有销毁cookie
     // 所以�?户�?�? cookie 还是存在，�?致的�?? --> 退出登陆后，服务�?检测到cookie
@@ -179,10 +178,26 @@ app.post('/diaryApi', function (req, res) {
     }
 })
 
-app.post('historyApi',function (req,res) {
-    console.log('历史查询api')
+app.post('/historyApi',function (req,res) {
+    console.log(req.body)
+    if(req.body){
+        client.connect(url, function (err, client) {
+            var query = {
+                "date": {
+                    "$gte": req.body.startTime,
+                    "$lte": req.body.endTime,
+                }
+            };
+            var db = client.db("todoList");
+            db.collection("todolist").find(query).toArray(function (err, resultData) {
+                if (err) throw err;
+                console.log(resultData);
+                res.send(resultData)
+            });
+        });
+    }
 })
-//tomatoData
+
 app.post('/saveTomatoData', function (req, res) {
     var document = req.body;
     res.status(200)
@@ -265,6 +280,5 @@ app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.render('error');
 });
-
 
 module.exports = app;
