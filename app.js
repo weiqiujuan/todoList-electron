@@ -188,10 +188,12 @@ app.post('/historyApi',function (req,res) {
                     "$lte": req.body.endTime,
                 }
             };
+            var sort = [ ["date", 1] ];
+
             var db = client.db("todoList");
-            db.collection("todolist").find(query).toArray(function (err, resultData) {
+            db.collection("todolist").find(query).sort(sort).toArray(function (err, resultData) {
                 if (err) throw err;
-                console.log(resultData);
+                //console.log(resultData);
                 res.send(resultData)
             });
         });
